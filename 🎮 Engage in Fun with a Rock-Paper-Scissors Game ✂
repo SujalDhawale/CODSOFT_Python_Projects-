@@ -1,0 +1,147 @@
+import random
+import tkinter as tk
+from tkinter import messagebox
+
+# Function to generate the computer's choice
+def computer_choice():
+    return random.choice(["Rock", "Paper", "Scissors"])
+
+# Function to determine the winner
+def determine_winner(user, computer):
+    if user == computer:
+        return "It's a tie!"
+    elif (user == "Rock" and computer == "Scissors") or (user == "Scissors" and computer == "Paper") or (user == "Paper" and computer == "Rock"):
+        return "You win!"
+    else:
+        return "You lose!"
+
+# Function to update the score and check if the game is over
+def start_game(choice):
+    global user_score, comp_score, round_count
+
+    user_choice.set(choice)  # Set user's choice
+    comp_choice = computer_choice()  # Get computer's choice
+    computer_choice_label.config(text=f"Computer chose: {comp_choice}", fg="#FF4500")
+    
+    result = determine_winner(choice, comp_choice)  # Determine winner
+    result_label.config(text=result, fg="#32CD32" if result == "You win!" else "#FF6347")
+    
+    # Update scores based on the result
+    if result == "You win!":
+        user_score += 1
+    elif result == "You lose!":
+        comp_score += 1
+    
+    # Update round count
+    round_count += 1
+    
+    # Update the score display
+    score_label.config(text=f"Your Score: {user_score}  |  Computer Score: {comp_score}", fg="#00BFFF")
+    
+    # Check if the game is over (3 rounds)
+    if round_count >= 3:
+        if user_score > comp_score:
+            final_result = f"Congratulations {player_name}, You win the game!"
+        elif user_score < comp_score:
+            final_result = f"Good try {player_name}, Computer wins the game! Keep playing!"
+        else:
+            final_result = f"It's a tie overall, {player_name}!"
+
+        messagebox.showinfo("Game Over", f"Game Over! {final_result}")
+        reset_game()  # Reset for a new game
+
+# Function to reset the game
+def reset_game():
+    global user_score, comp_score, round_count
+    user_score = 0
+    comp_score = 0
+    round_count = 0
+    score_label.config(text="Your Score: 0  |  Computer Score: 0", fg="#00BFFF")
+    result_label.config(text="", fg="black")
+    computer_choice_label.config(text="Computer chose: ", fg="black")
+
+# Function to get the player's name
+def get_player_name():
+    global player_name
+    player_name = name_entry.get()
+    if player_name.strip() == "":
+        messagebox.showerror("Error", "Please enter a valid name.")
+        return
+    name_entry.config(state="disabled")  # Disable name entry after input
+    start_button.config(state="disabled")  # Disable the start button
+    name_label.pack_forget()  # Hide the name input prompt
+    name_entry.pack_forget()  # Hide the entry field
+    start_button.pack_forget()  # Hide the start button
+    welcome_label.config(text=f"Welcome {player_name}!", fg="#32CD32")
+    game_frame.pack()  # Show the game frame
+
+# Initialize score and round count
+user_score = 0
+comp_score = 0
+round_count = 0
+player_name = ""
+
+# Set up the main window
+root = tk.Tk()
+root.title("Rock, Paper, Scissors Game")
+root.geometry("400x500")
+root.config(bg="#2E8B57")
+
+# Name input frame
+name_frame = tk.Frame(root, bg="#2E8B57")
+name_frame.pack(pady=20)
+
+name_label = tk.Label(name_frame, text="Enter your name:", font=("Arial", 14), fg="white", bg="#2E8B57")
+name_label.pack()
+
+name_entry = tk.Entry(name_frame, font=("Arial", 14), bd=2, relief="solid")
+name_entry.pack()
+
+start_button = tk.Button(name_frame, text="Start Game", font=("Arial", 14), bg="#FF6347", fg="white", command=get_player_name)
+start_button.pack(pady=10)
+
+# Welcome label
+welcome_label = tk.Label(root, text="", font=("Arial", 18, "bold"), bg="#2E8B57")
+welcome_label.pack(pady=20)
+
+# Game frame (initially hidden)
+game_frame = tk.Frame(root, bg="#2E8B57")
+
+# Label for the title
+title_label = tk.Label(game_frame, text="Rock, Paper, Scissors", font=("Arial", 18, "bold"), fg="white", bg="#2E8B57")
+title_label.pack(pady=20)
+
+# Label for showing the computer's choice
+computer_choice_label = tk.Label(game_frame, text="Computer chose: ", font=("Arial", 14), bg="#2E8B57")
+computer_choice_label.pack(pady=20)
+
+# Result label to show who won the round
+result_label = tk.Label(game_frame, text="", font=("Arial", 14), bg="#2E8B57")
+result_label.pack(pady=20)
+
+# Score label to show the current score
+score_label = tk.Label(game_frame, text="Your Score: 0  |  Computer Score: 0", font=("Arial", 14), fg="#00BFFF", bg="#2E8B57")
+score_label.pack(pady=20)
+
+# Variable to store user's choice
+user_choice = tk.StringVar()
+
+# Buttons for user to select Rock, Paper, or Scissors with animations
+def on_button_press(button):
+    button.config(bg="#FF4500")  # Change background color on press
+    root.after(100, lambda: button.config(bg="#FF6347"))  # Reset after 100ms delay
+
+rock_button = tk.Button(game_frame, text="Rock", font=("Arial", 14), bg="#FF6347", fg="white", command=lambda: start_game("Rock"))
+rock_button.pack(side=tk.LEFT, padx=20, pady=10)
+rock_button.bind("<ButtonPress-1>", lambda e: on_button_press(rock_button))
+
+paper_button = tk.Button(game_frame, text="Paper", font=("Arial", 14), bg="#FF6347", fg="white", command=lambda: start_game("Paper"))
+paper_button.pack(side=tk.LEFT, padx=20, pady=10)
+paper_button.bind("<ButtonPress-1>", lambda e: on_button_press(paper_button))
+
+scissors_button = tk.Button(game_frame, text="Scissors", font=("Arial", 14), bg="#FF6347", fg="white", command=lambda: start_game("Scissors"))
+scissors_button.pack(side=tk.LEFT, padx=20, pady=10)
+scissors_button.bind("<ButtonPress-1>", lambda e: on_button_press(scissors_button))
+
+# Run the Tkinter event loop
+root.mainloop()
