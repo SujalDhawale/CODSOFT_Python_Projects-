@@ -1,0 +1,53 @@
+def calculator():
+    print("Welcome to the Calculator!")
+    print("Perform operations: Addition(+), Subtraction(-), Multiplication(*), Division(/)\n")
+
+    while True:
+        try:
+            # Input for numbers
+            num1 = float(input("Enter the first number: "))
+            num2 = float(input("Enter the second number: "))
+
+            # Input for operation
+            operation = input("Select an operation (+, -, *, /): ").strip()
+
+            # Perform calculations based on operation
+            if operation == '+':
+                result = num1 + num2
+            elif operation == '-':
+                result = num1 - num2
+            elif operation == '*':
+                result = num1 * num2
+            elif operation == '/':
+                if num2 == 0:
+                    print("Error: Division by zero is not allowed. Please try again.")
+                    continue
+                result = num1 / num2
+            else:
+                print("Invalid operation. Please select one of (+, -, *, /).")
+                continue
+
+            # Display the result as int if both inputs are integers, otherwise as float
+            if num1.is_integer() and num2.is_integer():
+                print(f"The result is: {int(result)}")
+            else:
+                print(f"The result is: {result:.2f}")
+
+        except ValueError:
+            print("Invalid input. Please enter numeric values.")
+        except KeyboardInterrupt:
+            print("\nProcess interrupted. Exiting the calculator.")
+            break
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
+
+        # Ask if the user wants another calculation
+        next_step = input("\nWould you like to perform another calculation? (yes/no): ").strip().lower()
+        if next_step not in ['yes', 'y']:
+            print("Thank you for using the Calculator! Goodbye.")
+            break
+
+
+# Run the calculator
+if __name__ == "__main__":
+    calculator()
